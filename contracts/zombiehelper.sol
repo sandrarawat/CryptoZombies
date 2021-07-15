@@ -1,75 +1,30 @@
 pragma solidity >=0.5.0 <0.6.0;
 
-/**
-* @title Ownable
-* @dev The Ownable contract has an owner address, and provides basic authorization control
-* functions, this simplifies the implementation of "user permissions".
-*/
-contract Ownable {
-  address private _owner;
+import "./zombiefeeding.sol";
 
-  event OwnershipTransferred(
-    address indexed previousOwner,
-    address indexed newOwner
-  );
+contract ZombieHelper is ZombieFeeding {
 
-  /**
-  * @dev The Ownable constructor sets the original `owner` of the contract to the sender
-  * account.
-  */
-  constructor() internal {
-    _owner = msg.sender;
-    emit OwnershipTransferred(address(0), _owner);
-  }
-
-  /**
-  * @return the address of the owner.
-  */
-  function owner() public view returns(address) {
-    return _owner;
-  }
-
-  /**
-  * @dev Throws if called by any account other than the owner.
-  */
-  modifier onlyOwner() {
-    require(isOwner());
+  modifier aboveLevel(uint _level, uint _zombieId) {
+    require(zombies[_zombieId].level >= _level);
     _;
   }
 
-  /**
-  * @return true if `msg.sender` is the owner of the contract.
-  */
-  function isOwner() public view returns(bool) {
-    return msg.sender == _owner;
+  function changeName(uint _zombieId, string calldata _newName) external aboveLevel(2, _zombieId) {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    zombies[_zombieId].name = _newName;
   }
 
-  /**
-  * @dev Allows the current owner to relinquish control of the contract.
-  * @notice Renouncing to ownership will leave the contract without an owner.
-  * It will not be possible to call the functions with the `onlyOwner`
-  * modifier anymore.
-  */
-  function renounceOwnership() public onlyOwner {
-    emit OwnershipTransferred(_owner, address(0));
-    _owner = address(0);
+  function changeDna(uint _zombieId, uint _newDna) external aboveLevel(20, _zombieId) {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    zombies[_zombieId].dna = _newDna;
   }
 
-  /**
-  * @dev Allows the current owner to transfer control of the contract to a newOwner.
-  * @param newOwner The address to transfer ownership to.
-  */
-  function transferOwnership(address newOwner) public onlyOwner {
-    _transferOwnership(newOwner);
-  }
-
-  /**
-  * @dev Transfers control of the contract to a newOwner.
-  * @param newOwner The address to transfer ownership to.
-  */
-  function _transferOwnership(address newOwner) internal {
-    require(newOwner != address(0));
-    emit OwnershipTransferred(_owner, newOwner);
-    _owner = newOwner;
-  }
-}
+  function getZombiesByOwner(address _owner) external view returns(uint[] memory) {
+    uint[] memory result = new uint[](ownerZombieCount[_owner]);
+    uint counter = 0;
+    for (uint i = 0; i < zombies.length; i++) {
+      if (zombieToOwner[i] == _owner) {
+        result[counter] = i;
+        counter++;
+      }
+    }
