@@ -19,7 +19,6 @@
  */
 
  const HDWalletProvider = require('@truffle/hdwallet-provider');
- const mnemonic = "voice immense point dish oval swamp under leg edge gadget lock direct";
  const fs = require('fs');
  //const mnemonic = fs.readFileSync(".secret").toString().trim();
  
