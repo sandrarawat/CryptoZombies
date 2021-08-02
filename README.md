@@ -1,5 +1,7 @@
 # CryptoZombies
 
+A solidity contract deployed on the Rinkeby testnet
+
 ## Quick Start
 
 1. cd into project repo
