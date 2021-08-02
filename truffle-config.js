@@ -20,7 +20,7 @@
 
  const HDWalletProvider = require('@truffle/hdwallet-provider');
  const fs = require('fs');
- //const mnemonic = fs.readFileSync(".secret").toString().trim();
+ const mnemonic = fs.readFileSync("./secret.txt").toString().trim();
  
  module.exports = {
    /**
@@ -59,7 +59,10 @@
      // Useful for deploying to a public network.
      // NB: It's important to wrap the provider as a function.
      rinkeby: {
-     provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/1b9ab4cdd102455eb127edfdc01eb3a6`),
+     provider: function () {
+        // Setting the provider with the Infura Rinkeby address and Token
+        return new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/1b9ab4cdd102455eb127edfdc01eb3a6`)
+      },
      
      network_id: 4,       // Ropsten's id
      gas: 5500000,        // Ropsten has a lower block limit than mainnet
